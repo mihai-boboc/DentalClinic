@@ -11,12 +11,16 @@ namespace DentalClinic
             bundles.Add(new ScriptBundle("~/bundles/lib").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/bootstrap.js",
+                        "~/Scripts/bootstrap.min.js",
                         "~/Scripts/bootbox.js",
                         "~/Scripts/respond.js",
                         "~/Scripts/DataTables/jquery.dataTables.js",
                         "~/Scripts/moment.js",
                         "~/Scripts/moment.min.js",
                         "~/Scripts/bootstrap-datetimepicker.js",
+                        "~/Scripts/fullCalendar/main.js",
+                        "~/Scripts/fullCalendar/main.min.js",
+                        "~/Scripts/fullCalendar/locales-all.js",
                         "~/Scripts/datatables/dataTables.bootstrap4.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -31,6 +35,7 @@ namespace DentalClinic
                       "~/Content/bootstrap.css",
                       "~/Content/DataTables/css/dataTables.bootstrap4.css",
                       "~/Content/site.css",
+                      /*"~/Scripts/fullCalendar/main.css",*/
                       "~/Content/less/_bootstrap-datetimepicker.less",
                       "~/Content/less/bootstrap-datetimepicker-build.less",
                       "~/Content/bootstrap-responsive.css"));

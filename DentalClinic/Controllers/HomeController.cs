@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace DentalClinic.Controllers
 {
+    [Authorize(Roles ="Admin,Staff,Visitor")]
     public class HomeController : Controller
     {
         public ActionResult Index()

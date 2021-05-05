@@ -27,3 +27,7 @@ textarea {
     position: relative;
     padding: 30px;
 }
+
+.input-group {
+    width: 130%;
+}

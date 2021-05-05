@@ -35,9 +35,9 @@ namespace DentalClinic.Controllers.APIControllers
 
         // GET: api/Appointments/5
         [ResponseType(typeof(Appointment))]
-        public IHttpActionResult GetAppointment(int id)
+        public IHttpActionResult GetAppointmentByDoctor(int id)
         {
-            Appointment appointment = db.Appointments.Find(id);
+            var appointment = db.Appointments.Where(x => x.DoctorId == id).ToList();
             if (appointment == null)
             {
                 return NotFound();

@@ -13,6 +13,12 @@ namespace DentalClinic
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+/*            routes.MapRoute(
+                name: "AutoCompleteDate",
+                url: "Appointment/CreateAutoCompleteDate?{date}&{id}",
+                defaults: new { controller = "Appointment", action = "CreateAutoCompleteDate" }
+            );*/
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

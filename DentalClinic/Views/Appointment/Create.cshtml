@@ -8,7 +8,7 @@
 <h2>Create</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Create","Appointment"))
 {
     @Html.AntiForgeryToken()
 
@@ -19,7 +19,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.StartFrom, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.StartFrom, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                @Html.EditorFor(model => model.StartFrom, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local", @id = "test" } })
                 @Html.ValidationMessageFor(model => model.StartFrom, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -35,7 +35,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DoctorId, "DoctorId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("DoctorId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("DoctorId", null, htmlAttributes: new { @class = "form-control" , @id = "doctorId"})
                 @Html.ValidationMessageFor(model => model.DoctorId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -78,4 +78,11 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+
+        $(document).ready(function () {
+            $('#test')[0].defaultValue = moment($('#test')[0].defaultValue).format("YYYY-MM-DDThh:mm")
+            $('#doctorId').val(@Model.DoctorId)
+        })
+    </script>
 }

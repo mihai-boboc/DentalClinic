@@ -21,7 +21,7 @@ namespace DentalClinic.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("ClinicDbContext", throwIfV1Schema: false)
         {
         }
 

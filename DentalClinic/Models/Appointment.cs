@@ -13,10 +13,10 @@ namespace DentalClinic.Models
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy HH:mm}")]
         public DateTime StartFrom { get; set; }
-        public int CustomerId { get; set; }
-        public int DoctorId { get; set; }
-        public int NurseId { get; set; }
-        public int ProcedureId { get; set; }
+        public int? CustomerId { get; set; }
+        public int? DoctorId { get; set; }
+        public int? NurseId { get; set; }
+        public int? ProcedureId { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual Doctor Doctor { get; set; }
         public virtual Nurse Nurse { get; set; }

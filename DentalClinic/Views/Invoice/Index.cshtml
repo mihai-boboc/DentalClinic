@@ -1,0 +1,82 @@
+﻿@model DentalClinic.ModelView.InvoiceViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    double sum = 0;
+    foreach (var item in Model.Appoiments)
+    {
+        sum += item.Procedure.Price;
+    }
+}
+
+<h2>@Model.Customer.Name</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Procedure Name
+        </th>
+        <th>
+            Procedure Speciality
+        </th>
+
+        <th>
+            Doctor
+        </th>
+        <th>
+            Nurse
+        </th>
+        <th>
+            Date
+        </th>
+        <th>
+            Procedure Price
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Appoiments)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Procedure.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Procedure.Speciality)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Doctor.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nurse.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartFrom)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Procedure.Price)
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit","Edit", "Appointment", new { id = item.Id },null) |
+                @Html.ActionLink("Delete", "Delete", "Appointment", new { id = item.Id }, null)
+            </td>
+        </tr>
+    }
+<tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><b>Total</b></td>
+        <td>
+            <b>@sum</b>
+        </td>
+        <td></td>
+</tr>
+
+
+
+</table>

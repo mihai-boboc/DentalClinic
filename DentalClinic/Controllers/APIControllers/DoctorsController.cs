@@ -33,6 +33,15 @@ namespace DentalClinic.Controllers.APIControllers
             return Ok(doctorList);
         }
 
+        [Route("api/doctors/id/{id}")]
+        public IHttpActionResult GetDoctorById(int id)
+        {
+
+            var doctor = db.Doctors.SingleOrDefault(x => x.Id == id);
+
+            return Ok(Mapper.Map<Doctor, DoctorDto>(doctor));
+        }
+
         public IHttpActionResult DeleteDoctor(int id)
         {
             Doctor doctor = db.Doctors.Find(id);

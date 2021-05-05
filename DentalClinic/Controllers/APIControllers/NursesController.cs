@@ -34,6 +34,31 @@ namespace DentalClinic.Controllers.APIControllers
             return Ok(nurseList);
         }
 
+        public IHttpActionResult GetNurseBySpeciality(string id)
+        {
+            var nurseListDtoList = new List<NurseDto>();
+
+            var specialityEnum = (Speciality)Enum.Parse(typeof(Speciality), id);
+
+            var nurseList = db.Nurses.Where(x => x.Speciality == specialityEnum).ToList();
+
+            foreach (var procedure in nurseList)
+            {
+                nurseListDtoList.Add(Mapper.Map<Nurse, NurseDto>(procedure));
+            }
+
+            return Ok(nurseListDtoList);
+        }
+
+        [Route("api/nurses/id/{id}")]
+        public IHttpActionResult GetNurseById(int id)
+        {
+
+            var nurse = db.Nurses.SingleOrDefault(x => x.Id == id);
+
+            return Ok(Mapper.Map<Nurse, NurseDto>(nurse));
+        }
+
         // DELETE: api/Nurses/5
         [ResponseType(typeof(Nurse))]
         public IHttpActionResult DeleteNurse(int id)

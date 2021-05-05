@@ -2,6 +2,442 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <p>Soon</p>>
+
+
+<div class="container">
+    <br />
+    <br />
+    <div id='calendar'></div>
 </div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+            </div>
+            <div class="modal-body">
+                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                    <span class="glyphicon glyphicon-remove"></span> Remove
+                </button>
+                <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                    <span class="glyphicon glyphicon-pencil"></span> Edit
+                </button>
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Save Event</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <select class="form-control" id="customers"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Start</label>
+                        <div class="input-group" id="dtp1">
+                            <input class="form-control text-box single-line valid" type="datetime-local" id="txtStart" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Doctor</label>
+                        <input type="text" id="doctorText" class="form-control" readonly/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nurse</label>
+                        <select class="form-control" id="nurses"></select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Procedure</label>
+                        <select class="form-control" id="procedures"></select>
+                    </div>
+
+
+
+                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<link href='https://fullcalendar.io/js/fullcalendar-2.6.1/fullcalendar.css' rel='stylesheet' />
+<link href='https://fullcalendar.io/js/fullcalendar-2.6.1/fullcalendar.print.css' rel='stylesheet' media='print' />
+<link href='https://fullcalendar.io/js/fullcalendar-scheduler-1.2.1/scheduler.min.css' rel='stylesheet' />
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src='//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js'></script>
+    <script src='https://fullcalendar.io/js/fullcalendar-2.6.1/fullcalendar.js'></script>
+    <script src='https://fullcalendar.io/js/fullcalendar-scheduler-1.2.1/scheduler.js'></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+
+
+    <script>
+        $(function () { // document ready
+
+            var doctorsArray = []
+            var appointments = []
+            var selectedEvent = null;
+
+
+            function getNurses(id) {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Nurses/" + id,
+                    success: function (data) {
+                        var s = '<option value="-1">Please Select a Nurse</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i].Id + '">' + data[i].Name + '</option>';
+                        }
+                        $("#nurses").html(s);
+                    }
+                });
+            }
+           
+
+
+            function getCustomers() {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Customers",
+                    success: function (data) {
+                        var s = '<option value="-1">Please Select a Customer</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i].Id + '">' + data[i].Name + '</option>';
+                        }
+                        $("#customers").html(s);
+                    }
+                });
+            }
+
+
+            function getProcedures(id) {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Procedures/" + id,
+                    success: function (data) {
+                        var s = '<option value="-1">Please Select a Procedure</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i].Id + '">' + data[i].Name + '</option>';
+                        }
+                        $("#procedures").html(s);
+                        console.log("/api/Procedures/" + id)
+                    }
+                });
+            }
+
+
+
+
+            showCalendar()
+
+            function renderCalendar(doctorsArray, appointments) {
+                console.log(appointments)
+                var calendar = $('#calendar');
+                calendar.fullCalendar({
+                    schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+                    resourceAreaWidth: 230,
+                    now: Date.now,
+                    height: "auto",
+                    editable: true,
+                    aspectRatio: 1.6,
+                    scrollTime: '00:00',
+                    resourceGroupField: "speciality",
+                    minTime: "9:00",
+                    maxTime: "20:00",
+
+
+                    header: {
+                        left: 'prev,next,today',
+                        center: 'title',
+                        right: 'timelineThreeDays'
+                    },
+                    defaultView: 'timelineDay',
+                    selectable: true,
+                    select: function (startDate, endDate, jsEvent, view, resource) {
+                        selectedEvent = {
+                            eventID: 0,
+                            title: '',
+                            description: '',
+                            start: startDate,
+                            end: endDate,
+                            doctor: resource.title,
+                            doctorId: resource.id,
+
+                            nurse: resource.nurse,
+                            procedure: resource.procedure,
+                            customer: resource.customer,
+                            speciality: resource.speciality
+                        };
+
+                        getProcedures(resource.speciality)
+                        getNurses(resource.speciality)
+                        getCustomers()
+
+                        openAddEditForm();
+                        $('#calendar').fullCalendar('unselect');
+
+                        //console.log('selected ' + startDate.format() + ' to ' + endDate.format() + ' on resource ' + resource.title);
+
+                    },
+                    eventClick: async function (calEvent, jsEvent, view) {
+                        selectedEvent = calEvent;
+                        var nurse;
+                        await getNursesById(calEvent.nurse).then(function (data) {
+                            nurse = data
+                        })
+
+                        var procedure;
+                        await getProceduresById(calEvent.procedure).then(function (data) {
+                            procedure = data
+                        })
+
+                        var doctor;
+                        await getDoctorById(calEvent.resourceId).then(function (data) {
+                            doctor = data
+                        })
+
+
+
+
+                        $('#myModal #eventTitle').text(calEvent.title);
+
+                        var $description = $('<div/>');
+
+                        $description.append($('<p/>').html('<b>Doctor:</b> ' + doctor.Name));
+                        $description.append($('<p/>').html('<b>Nurse:</b> ' + nurse.Name));
+
+                        $description.append($('<hr>'));
+
+                        $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("YYYY-MM-DD HH:mm")));
+                        $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("YYYY-MM-DD HH:mm")));
+
+                        $description.append($('<hr>'));
+
+                        $description.append($('<p/>').html('<b>Procedure:</b> ' + procedure.Name));
+
+                        $('#myModal #pDetails').empty().html($description);
+                        $('#myModal').modal();
+                    },
+
+                    resources: function (callback) {
+                        console.log(doctorsArray)
+                        callback(doctorsArray)
+                    },
+                    events: appointments
+
+                });
+
+
+            }
+
+            async function getDoctors() {
+                await $.ajax({
+                    type: "GET",
+                    url: "/api/Doctors",
+                    async: true,
+                    success: function (data) {
+                        $.each(data, function (i, doctor) {
+                            doctorsArray.push({
+                                id: doctor.Id,
+                                title: doctor.Name,
+                                speciality: doctor.Speciality
+                            })
+                        })
+                    },
+                    error: function (error) {
+                        alert('failed');
+                    }
+                })
+            }
+
+            async function getEvents() {
+                await $.ajax({
+                    type: "GET",
+                    async: true,
+                    url: "/api/appointments",
+                    success: function (data) {
+                        $.each(data, function (i, appointment) {
+
+                            endTime = moment(appointment.StartFrom).add(appointment.Procedure.Duration, 'minute').format("YYYY-MM-DDTHH:mm")
+                            console.log(appointment.StartFrom, endTime )
+                            appointments.push({
+                                eventID: appointment.Id,
+                                resourceId: appointment.DoctorId,
+                                title: appointment.Customer.Name,
+                                description: appointment.Procedure.Name,
+                                start: moment(appointment.StartFrom).format("YYYY-MM-DDTHH:mm"),
+                                end: moment(endTime),
+
+                                nurse: appointment.NurseId,
+                                procedure: appointment.ProcedureId,
+                                customer: appointment.CustomerId,
+                                allDay: false
+                            });
+                        })
+
+
+                    },
+                    error: function (error) {
+                        alert('failed');
+                    }
+                })
+            }
+
+            async function showCalendar() {
+                await getDoctors()
+                await getEvents()
+                renderCalendar(doctorsArray, appointments)
+            }
+
+
+
+            $('#btnEdit').click(function () {
+
+                window.location = "/Appointment/Edit/" + selectedEvent.eventID;
+            })
+
+            $('#btnDelete').click(function () {
+                if (selectedEvent != null && confirm('Are you sure?')) {
+                    $.ajax({
+                        type: "Delete",
+                        url: '/api/appointments/' + selectedEvent.eventID,
+                        success: function () {
+                            location.reload()
+                        },
+                        error: function () {
+                            alert('Failed');
+                        }
+                    })
+                }
+            })
+
+
+            function openAddEditForm() {
+                if (selectedEvent != null) {
+                    $('#hdEventID').val(selectedEvent.eventID);
+                    $('#txtStart').val(moment(selectedEvent.start).format("YYYY-MM-DDTHH:mm"));
+                    $('#doctorText').val(selectedEvent.doctor);
+                    $('#customers').val(selectedEvent.customer);
+                    $('#nurses').val(selectedEvent.nurse);
+                    $('#procedures').val(selectedEvent.procedure);
+                }
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal();
+            }
+
+            $('#btnSave').click(async function () {
+                //Validation/
+
+                var data = {
+
+                    Id: 0,
+                    StartFrom: $('#txtStart').val(),
+                    CustomerId: $('#customers').val(),
+                    DoctorId: selectedEvent.doctorId,
+                    NurseId: $('#nurses').val(),
+                    ProcedureId: $('#procedures').val(),
+                    Observations: null
+                }
+
+                console.log(data);
+                SaveEvent(data);
+            })
+                
+                // call function for submit data to the server
+
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: 'api/Appointments',
+                    data: data,
+                    success: function () {
+
+                        //Refresh the calender
+                        $('#myModalSave').modal('hide');
+
+                        doctorsArray = []
+                        appointments = []
+                        location.reload()
+
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+
+            }
+
+            async function getDoctorById(id) {
+                return $.ajax({
+                    type: "Get",
+                    url: 'api/doctors/id/'+id,
+                    success: function (data) {
+
+
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+            async function getNursesById(id) {
+                return $.ajax({
+                    type: "Get",
+                    url: 'api/nurses/id/' + id,
+                    success: function (data) {
+                        console.log(data)
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+            async function getProceduresById(id) {
+                return $.ajax({
+                    type: "Get",
+                    url: 'api/procedures/id/' + id,
+                    success: function (data) {
+
+
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+            
+        });
+    </script>
+}

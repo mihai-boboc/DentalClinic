@@ -1,10 +1,21 @@
 ﻿@model dynamic
-
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
+
+
+@*@using (Html.BeginForm("Create", "Appointment", FormMethod.Get))
+{
+    <div class="">
+        <button type="submit" class="btn btn-primary">Add New Appointment</button>
+    </div>
+    <br>
+}*@
+
+<select id="doctors"></select>
+
 <div id="calender"></div>
 
 <div id="myModal" class="modal fade" role="dialog">
@@ -89,15 +100,40 @@
 
     <script>
         $(document).ready(function () {
+            var url = "/api/appointments"
+            var doctorId = 0;
+
+            $.ajax({
+                type: "GET",
+                url: "/api/Doctors",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Doctor</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].Id + '">' + data[i].Name + '</option>';
+                    }
+                    $("#doctors").html(s);
+                }
+            });
+
+            $('select[id="doctors"]').change(function () {
+
+                url = "/api/appointments/" + this.value
+                doctorId = this.value
+                console.log(url)
+                FetchEventAndRenderCalendar(url)
+
+            })
+
+
             var events = [];
             var selectedEvent = null;
-            FetchEventAndRenderCalendar();
+            FetchEventAndRenderCalendar(url);
 
-            function FetchEventAndRenderCalendar() {
+            function FetchEventAndRenderCalendar(urlValue) {
                 var events = [];
                 $.ajax({
                     type: "GET",
-                    url: "/api/appointments",
+                    url: urlValue,
                     success: function (data) {
                         $.each(data, function (i, appointment) {
                             events.push({
@@ -108,8 +144,9 @@
                                 end: moment(appointment.StartFrom + appointment.Procedure.Duration),
                                 allDay: false
                             });
+                           
                         })
-
+                        console.log(events)
                         GenerateCalender(events);
                     },
                     error: function (error) {
@@ -124,7 +161,7 @@
                 $('#calender').fullCalendar({
                     contentHeight: 600,
                     defaultDate: new Date(),
-                    timeFormat: 'h(:mm)a',
+                    timeFormat: 'h:mm a',
                     header: {
                         left: 'prev,next today',
                         center: 'title',
@@ -146,8 +183,13 @@
                         $('#myModal').modal();
                     },
                     selectable: true,
-                    select: function () {
-                        window.location ="/Appointment/Create/";
+                    select: function (start, end) {
+                        var dateString = start._d.getFullYear() + "-" + start._d.getMonth() + "-" + start._d.getDate();
+                        console.log(dateString)
+                        console.log(start._d)
+                        date = Date.parse(dateString)
+                        window.location = "/Appointment/CreateAutoCompleteDate?date=" + dateString + "&id=" + doctorId
+
                     },
                     editable: true,
                 })
