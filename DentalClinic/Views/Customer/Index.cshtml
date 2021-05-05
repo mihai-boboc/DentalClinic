@@ -26,6 +26,7 @@
                 <th scope="col">Day of Birth</th>
                 <th scope="col">Phone Number</th>
                 <th scope="col">E-mail Address</th>
+                <th scope="col">Invoice</th>
                 <th scope="col">Delete</th>
             </tr>
         </thead>
@@ -75,6 +76,13 @@
                     {
                         data: "Id",
                         render: function (data) {
+
+                            return "<button class = 'btn btn-link js-invoice' data-customers-id=" + data + ">Invoice</button>"
+                        }
+                    },                    
+                    {
+                        data: "Id",
+                        render: function (data) {
                             return "<button class = 'btn btn-link js-delete' data-customers-id=" + data + ">Delete</button>"
                         }
                     }
@@ -97,6 +105,11 @@
                         })
                     }
                 });
+            });
+
+            $("#customers").on("click", ".js-invoice", function () {
+                var button = $(this);
+                window.location = "/Invoice/Index/" + button.attr("data-customers-id");
             });
 
         });
